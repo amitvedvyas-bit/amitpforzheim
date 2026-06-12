@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI & The Theory of the Firm</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --accent: #3e3dd8;
+            --accent-light: #ede9ff;
+            --accent-glow: rgba(62, 61, 216, 0.12);
+            --orange: #ff8c42;
+            --orange-light: #fff4e6;
+            --text: #0f1419;
+            --text-secondary: #626262;
+            --bg: #fafbfc;
+            --white: #ffffff;
+            --border: #e4e6ea;
+            --dark: #0f1419;
+            --danger: #e53e3e;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--dark);
+            color: var(--text);
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+            cursor: none;
+        }
+
+        /* ── SLIDE SYSTEM ── */
+        .slide {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+            padding: 60px 80px;
+        }
+        .slide.active { opacity: 1; pointer-events: all; }
+        .slide-inner { max-width: 1100px; width: 100%; }
+
+        /* ── BACKGROUNDS ── */
+        .bg-white { background: var(--white); }
+        .bg-light { background: var(--bg); }
+        .bg-accent { background: linear-gradient(135deg, #3e3dd8 0%, #6366f1 100%); color: white; }
+        .bg-dark { background: var(--dark); color: white; }
+
+        /* ── TYPOGRAPHY ── */
+        .eyebrow {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            opacity: 0.4;
+            margin-bottom: 20px;
+        }
+        .slide-title {
+            font-family: 'DM Serif Display', serif;
+            font-size: 50px;
+            line-height: 1.15;
+            margin-bottom: 20px;
+            letter-spacing: -1px;
+        }
+        .slide-sub {
+            font-size: 18px;
+            font-weight: 300;
+            line-height: 1.7;
+            opacity: 0.6;
+            max-width: 650px;
+        }
+        .medium { font-size: 24px; font-weight: 300; line-height: 1.6; }
+        .small { font-size: 13px; opacity: 0.4; }
+        .highlight { color: var(--accent); }
+        .bg-accent .highlight,
+        .bg-dark .highlight { color: var(--orange); }
+        .center { text-align: center; }
+
+        /* ── LAYOUT ── */
+        .split {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+        }
+        .split-wide {
+            display: grid;
+            grid-template-columns: 1.3fr 0.7fr;
+            gap: 70px;
+            align-items: center;
+        }
+
+        /* ── DIVIDER ── */
+        .divider {
+            width: 50px;
+            height: 3px;
+            background: var(--accent);
+            border-radius: 2px;
+            margin: 20px 0;
+        }
+        .divider-center { margin: 20px auto; }
+        .bg-accent .divider,
+        .bg-dark .divider { background: var(--orange); }
+
+        /* ── PILL ── */
+        .pill {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .pill-accent { background: var(--accent-light); color: var(--accent); }
+        .pill-orange { background: var(--orange-light); color: var(--orange); }
+        .pill-danger { background: #fee; color: var(--danger); }
+
+        /* ── FEATURE LIST ── */
+        .flist { list-style: none; }
+        .flist li {
+            font-size: 17px;
+            padding: 13px 0;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            line-height: 1.5;
+        }
+        .bg-accent .flist li,
+        .bg-dark .flist li { border-color: rgba(255,255,255,0.08); }
+        .flist li:last-child { border-bottom: none; }
+        .fdot {
+            width: 7px; height: 7px;
+            border-radius: 50%;
+            background: var(--accent);
+            flex-shrink: 0;
+            margin-top: 8px;
+        }
+        .bg-accent .fdot,
+        .bg-dark .fdot { background: var(--orange); }
+
+        /* ── EQUATION BOX ── */
+        .eqbox {
+            background: var(--bg);
+            border-radius: 14px;
+            padding: 32px;
+            text-align: center;
+            border-left: 4px solid var(--accent);
+        }
+        .bg-accent .eqbox,
+        .bg-dark .eqbox {
+            background: rgba(255,255,255,0.06);
+            border-left-color: var(--orange);
+        }
+        .bg-light .eqbox {
+            background: var(--white);
+        }
+        .eqtext {
+            font-family: 'DM Serif Display', serif;
+            font-size: 28px;
+        }
+        .eqsub {
+            font-size: 12px;
+            opacity: 0.4;
+            margin-top: 10px;
+        }
+
+        /* ── COMPARE ROW ── */
+        .cmp {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 24px;
+            align-items: center;
+        }
+        .cmp-box {
+            padding: 28px 24px;
+            border-radius: 14px;
+            text-align: center;
+        }
+        .cmp-left { background: var(--accent-glow); border-top: 3px solid var(--accent); }
+        .cmp-right { background: var(--orange-light); border-top: 3px solid var(--orange); }
+        .cmp-val {
+            font-family: 'DM Serif Display', serif;
+            font-size: 38px;
+            margin-bottom: 6px;
+        }
+        .cmp-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-weight: 700;
+            opacity: 0.45;
+        }
+        .vs {
+            width: 36px; height: 36px;
+            border-radius: 50%;
+            border: 2px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 700;
+            opacity: 0.3;
+        }
+
+        /* ── TABLE ── */
+        .clean-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+        .clean-table th {
+            text-align: left;
+            padding: 12px 16px;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 700;
+            color: var(--text-secondary);
+            border-bottom: 2px solid var(--border);
+        }
+        .clean-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+        }
+        .clean-table td:last-child {
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        /* ── SHIFT CARDS ── */
+        .shift-row {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 16px;
+            align-items: center;
+            padding: 20px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        .shift-row:last-child { border-bottom: none; }
+        .shift-from {
+            text-align: right;
+            font-size: 16px;
+            opacity: 0.4;
+            text-decoration: line-through;
+            text-decoration-color: var(--danger);
+        }
+        .shift-arrow {
+            font-size: 18px;
+            color: var(--accent);
+            font-weight: 700;
+        }
+        .shift-to {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--accent);
+        }
+
+        /* ── ARGUMENT CARDS ── */
+        .arg-card {
+            padding: 24px;
+            border-radius: 14px;
+            border: 2px solid var(--border);
+        }
+        .arg-card h4 {
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 14px;
+            font-weight: 700;
+        }
+        .arg-internal { border-color: var(--accent); }
+        .arg-internal h4 { color: var(--accent); }
+        .arg-external { border-color: var(--orange); }
+        .arg-external h4 { color: var(--orange); }
+
+        /* ── IFRAME SLIDE ── */
+        .iframe-wrapper {
+            width: 100%;
+            height: 70vh;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+            border: 1px solid var(--border);
+        }
+        .iframe-wrapper iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* ── SVG CONTAINERS ── */
+        .svg-wrap { display: flex; justify-content: center; margin: 20px 0; }
+        .svg-wrap svg { max-width: 100%; height: auto; }
+
+        /* ── ANIMATION: SHRINKING FIRM ── */
+        @keyframes moveOut1 { 0% { transform: translate(0,0); opacity: 1; } 100% { transform: translate(-120px, -60px); opacity: 0.7; } }
+        @keyframes moveOut2 { 0% { transform: translate(0,0); opacity: 1; } 100% { transform: translate(130px, -50px); opacity: 0.7; } }
+        @keyframes moveOut3 { 0% { transform: translate(0,0); opacity: 1; } 100% { transform: translate(-110px, 70px); opacity: 0.7; } }
+        @keyframes moveOut4 { 0% { transform: translate(0,0); opacity: 1; } 100% { transform: translate(120px, 65px); opacity: 0.7; } }
+        @keyframes shrinkCircle { 0% { r: 130; } 100% { r: 80; } }
+        @keyframes fadeInDash { 0% { stroke-dashoffset: 100; opacity: 0; } 100% { stroke-dashoffset: 0; opacity: 0.3; } }
+
+        .slide.active .anim-out1 { animation: moveOut1 1.5s 0.5s ease forwards; }
+        .slide.active .anim-out2 { animation: moveOut2 1.5s 0.8s ease forwards; }
+        .slide.active .anim-out3 { animation: moveOut3 1.5s 1.1s ease forwards; }
+        .slide.active .anim-out4 { animation: moveOut4 1.5s 1.4s ease forwards; }
+        .slide.active .anim-shrink { animation: shrinkCircle 1.5s 0.5s ease forwards; }
+        .slide.active .anim-dash { animation: fadeInDash 0.8s 1.8s ease forwards; }
+
+        /* ── BIBLIOGRAPHY ── */
+        .bib { font-size: 11.5px; line-height: 1.8; color: var(--text-secondary); }
+        .bib p { margin-bottom: 6px; }
+        .bib-cols { columns: 2; column-gap: 40px; }
+
+        /* ── PROGRESS BAR ── */
+        .progress {
+            position: fixed;
+            top: 0; left: 0;
+            height: 3px;
+            background: var(--accent);
+            z-index: 1000;
+            transition: width 0.4s ease;
+        }
+
+        /* ── COUNTER ── */
+        .counter {
+            position: fixed;
+            bottom: 28px;
+            right: 36px;
+            font-size: 12px;
+            font-weight: 600;
+            z-index: 1000;
+            letter-spacing: 1px;
+        }
+
+        /* ── NAV HINT ── */
+        .nav-hint {
+            position: fixed;
+            bottom: 28px;
+            left: 36px;
+            font-size: 11px;
+            z-index: 1000;
+            opacity: 0.2;
+            transition: opacity 1s ease;
+        }
+
+        /* ── CURSOR ── */
+        .cursor {
+            position: fixed;
+            width: 14px; height: 14px;
+            border-radius: 50%;
+            background: var(--accent);
+            mix-blend-mode: difference;
+            pointer-events: none;
+            z-index: 10000;
+            transform: translate(-50%, -50%);
+        }
+
+        /* ── CLICK AREA ── */
+        .click-area {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            z-index: 500;
+            cursor: none;
+        }
+
+        /* ── FINAL TEXT ── */
+        .final {
+            font-family: 'DM Serif Display', serif;
+            font-size: 56px;
+            line-height: 1.2;
+            letter-spacing: -1.5px;
+        }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 1024px) {
+            .slide { padding: 40px; }
+            .slide-title { font-size: 36px; }
+            .split, .split-wide { grid-template-columns: 1fr; gap: 30px; }
+            .cmp { grid-template-columns: 1fr; }
+            .vs { margin: 0 auto; }
+            .final { font-size: 36px; }
+            .iframe-wrapper { height: 50vh; }
+            .shift-row { grid-template-columns: 1fr; gap: 4px; text-align: left; }
+            .shift-from { text-align: left; }
+            .bib-cols { columns: 1; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="progress" id="progress"></div>
+<div class="click-area" id="clickArea"></div>
+<div class="nav-hint" id="navHint">← → or click to navigate</div>
+<div class="counter" id="counter">1 / 20</div>
+
+
+<!-- ══════════ 1. TITLE  [File 1 · Slide 1] ══════════ -->
+<div class="slide bg-white active" data-slide="1">
+    <div class="slide-inner center">
+        <div class="eyebrow">A Presentation on Economics & AI</div>
+        <h1 class="slide-title" style="font-size: 58px;">AI & The Theory<br>of the Firm</h1>
+        <div class="divider divider-center"></div>
+        <p class="slide-sub" style="margin: 0 auto;">
+            If AI knows everything, why do companies still exist?
+        </p>
+        <p class="small" style="margin-top: 50px;">
+            Coase (1937) · Hart (1986) · Williamson (1979) · Holmström · Faraj & Leonardi (2022) · Warin (2025)
+        </p>
+    </div>
+</div>
+
+
+<!-- ══════════ 2. THOUGHT EXPERIMENT  [File 1 · Slide 2 — pills updated] ══════════ -->
+<div class="slide bg-light" data-slide="2">
+    <div class="slide-inner center">
+        <div class="eyebrow">Opening · Thought Experiment</div>
+        <h2 class="slide-title" style="font-size: 38px;">Imagine an AI that knows<br><span class="highlight">everything</span></h2>
+        <div style="display: flex; justify-content: center; gap: 14px; margin: 30px 0; flex-wrap: wrap;">
+            <span class="pill pill-accent">Every management framework</span>
+            <span class="pill pill-accent">Every programming language</span>
+            <span class="pill pill-accent">Every legal precedent</span>
+            <span class="pill pill-accent">Every industry report</span>
+            <span class="pill pill-accent">Can communicate instantly with anyone</span>
+        </div>
+        <p class="medium center" style="margin-top: 30px; opacity: 0.5;">
+            If all of this is true — will firms still exist?
+        </p>
+    </div>
+</div>
+
+
+<!-- ══════════ 3. SNEAKERS DASHBOARD  [File 1 · Slide 3] ══════════ -->
+<div class="slide bg-white" data-slide="3" style="padding: 30px 40px;">
+    <div class="slide-inner" style="max-width: 1300px;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+            <div>
+                <div class="eyebrow" style="margin-bottom: 6px;">Live Demo · Sneakers Co 2035</div>
+                <p style="font-size: 13px; color: var(--text-secondary);">12 humans · 14,756 AI agents · 58,240 decisions/day</p>
+            </div>
+            <span class="pill pill-accent">One-itsuka</span>
+        </div>
+        <div class="iframe-wrapper">
+            <iframe src="sneakers-dashboard.html" title="Sneakers Co Dashboard"></iframe>
+        </div>
+    </div>
+</div>
+
+
+<!-- ══════════ 4. TRANSACTION COSTS  [File 1 · Slide 4] ══════════ -->
+<div class="slide bg-white" data-slide="4">
+    <div class="slide-inner">
+        <div class="split-wide">
+            <div>
+                <div class="eyebrow">Coase · 1937</div>
+                <h2 class="slide-title" style="font-size: 42px;">Markets are<br>expensive</h2>
+                <div class="divider"></div>
+                <p class="slide-sub">
+                    When companies buy externally, they pay hidden costs at every step.
+                </p>
+            </div>
+            <div>
+                <ul class="flist">
+                    <li><div class="fdot"></div>Search for suppliers</li>
+                    <li><div class="fdot"></div>Compare options</li>
+                    <li><div class="fdot"></div>Negotiate contracts</li>
+                    <li><div class="fdot"></div>Monitor performance</li>
+                    <li><div class="fdot"></div>Resolve disputes</li>
+                </ul>
+                <p class="small" style="margin-top: 16px;">These are transaction costs.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- ══════════ 5. COASE'S EQUATION  [File 1 · Slide 5] ══════════ -->
+<div class="slide bg-light" data-slide="5">
+    <div class="slide-inner center">
+        <div class="eyebrow">Coase's Core Insight</div>
+        <h2 class="slide-title" style="font-size: 40px;">The Equation</h2>
+        <div class="eqbox" style="max-width: 650px; margin: 30px auto;">
+            <div class="eqtext">
+                Internal Cost <span class="highlight">&lt;</span> External Cost
+            </div>
+            <div class="eqsub">Firms exist because internal coordination is often cheaper than market coordination</div>
+        </div>
+        <div style="margin-top: 30px; max-width: 500px; margin-left: auto; margin-right: auto;">
+            <div class="cmp">
+                <div class="cmp-box cmp-left">
+                    <div class="cmp-label">Employ Staff</div>
+                    <div class="cmp-val" style="color: var(--accent);">Firm</div>
+                </div>
+                <div class="vs">or</div>
+                <div class="cmp-box cmp-right">
+                    <div class="cmp-label">Hire Freelancers</div>
+                    <div class="cmp-val" style="color: var(--orange);">Market</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- ══════════ 6. AI ATTACKS TRANSACTION COSTS  [File 1 · Slide 6] ══════════ -->
+<div class="slide bg-white" data-slide="6">
+    <div class="slide-inner">
+        <div class="eyebrow">The AI Impact</div>
+        <h2 class="slide-title" style="font-size: 40px;">AI attacks <span class="highlight">every</span> transaction cost</h2>
+        <div style="margin-top: 30px; max-width: 700px;">
+            <table class="clean-table">
+                <thead>
+                    <tr><th>Transaction Cost</th><th>AI Impact</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>Search</td><td>Instant discovery</td></tr>
+                    <tr><td>Information gathering</td><td>Automated</td></tr>
+                    <tr><td>Communication</td><td>AI copilots</td></tr>
+                    <tr><td>Coordination</td><td>AI agents</td></tr>
+                    <tr><td>Monitoring</td><td>AI analytics</td></tr>
+                    <tr><td>Documentation</td><td>Automated</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+<!-- ══════════ 7. CONSEQUENCE + ANIMATION  [File 1 · Slide 7 + File 2 · Slide 7 animation] ══════════ -->
+<div class="slide bg-light" data-slide="7">
+    <div class="slide-inner center">
+        <div class="eyebrow">Potential Consequence</div>
+        <h2 class="slide-title" style="font-size: 42px;">If transaction costs<br>disappear, do firms <span class="highlight">shrink?</span></h2>
+        <div class="svg-wrap" style="margin: 10px 0;">
+            <svg width="460" height="260" viewBox="0 0 500 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <!-- Main firm circle -->
+                <circle class="anim-shrink" cx="250" cy="150" r="130" fill="#ede9ff" stroke="#3e3dd8" stroke-width="1.5" opacity="0.4"/>
+                <text x="250" y="155" text-anchor="middle" fill="#3e3dd8" font-size="14" font-weight="700" font-family="Inter">FIRM</text>
+                <!-- Functions that move out -->
+                <g class="anim-out1">
+                    <rect x="180" y="60" width="60" height="24" rx="12" fill="#3e3dd8" opacity="0.8"/>
+                    <text x="210" y="76" text-anchor="middle" fill="white" font-size="9" font-weight="600" font-family="Inter">Research</text>
+                </g>
+                <g class="anim-out2">
+                    <rect x="270" y="70" width="50" height="24" rx="12" fill="#3e3dd8" opacity="0.8"/>
+                    <text x="295" y="86" text-anchor="middle" fill="white" font-size="9" font-weight="600" font-family="Inter">Legal</text>
+                </g>
+                <g class="anim-out3">
+                    <rect x="170" y="190" width="70" height="24" rx="12" fill="#3e3dd8" opacity="0.8"/>
+                    <text x="205" y="206" text-anchor="middle" fill="white" font-size="9" font-weight="600" font-family="Inter">Marketing</text>
+                </g>
+                <g class="anim-out4">
+                    <rect x="265" y="195" width="65" height="24" rx="12" fill="#3e3dd8" opacity="0.8"/>
+                    <text x="297" y="211" text-anchor="middle" fill="white" font-size="9" font-weight="600" font-family="Inter">Analytics</text>
+                </g>
+                <!-- Dashed connection lines (appear after) -->
+                <line class="anim-dash" x1="160" y1="80" x2="174" y2="105" stroke="#3e3dd8" stroke-width="1" stroke-dasharray="4" opacity="0"/>
+                <line class="anim-dash" x1="340" y1="75" x2="310" y2="110" stroke="#3e3dd8" stroke-width="1" stroke-dasharray="4" opacity="0"/>
+                <line class="anim-dash" x1="155" y1="230" x2="190" y2="195" stroke="#3e3dd8" stroke-width="1" stroke-dasharray="4" opacity="0"/>
+                <line class="anim-dash" x1="345" y1="225" x2="305" y2="195" stroke="#3e3dd8" stroke-width="1" stroke-dasharray="4" opacity="0"/>
+            </svg>
+        </div>
+        <div style="display: flex; justify-content: center; gap: 14px; margin: 10px 0; flex-wrap: wrap;">
+            <span class="pill pill-orange">Smaller firms</span>
+            <span class="pill pill-orange">More outsourcing</span>
+            <span class="pill pill-orange">More freelancers</span>
+            <span class="pill pill-orange">One-person unicorns</span>
+        </div>
+        <p class="medium center" style="margin-top: 16px; opacity: 0.5; font-size: 20px;">
+            But AI changes costs on <em>both</em> sides of the equation...
+        </p>
+    </div>
+</div>
+
+
+<!-- ══════════ 8. NOT SO FAST  [File 2 · Slide 8] ══════════ -->
+<div class="slide bg-accent" data-slide="8">
+    <div class="slide-inner center">
+        <div class="eyebrow">Does AI Eliminate Firms?</div>
+        <h2 class="slide-title" style="font-size: 54px;">Not so <span class="highlight">fast.</span></h2>
+        <div class="divider divider-center"></div>
+        <div class="eqbox" style="max-width: 500px; margin: 30px auto;">
+            <div class="eqtext" style="font-size: 22px;">
+                Transaction Costs ↓<br><br>
+                But…<br><br>
+                <span class="highlight">Uncertainty remains.</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- ══════════ 9. HART — INCOMPLETE CONTRACTS  [File 1 · Slide 9 — changed to light bg] ══════════ -->
+<div class="slide bg-light" data-slide="9">
+    <div class="slide-inner">
+        <div class="split-wide">
+            <div>
+                <div class="eyebrow">Hart · Nobel 2016</div>
+                <h2 class="slide-title" style="font-size: 44px;">Contracts remain<br><span class="highlight">incomplete</span></h2>
+                <div class="divider"></div>
+                <p class="slide-sub" style="font-size: 17px;">
+                    Even if AI lowers transaction costs, the future remains uncertain. Contracts can never specify every contingency.
+                </p>
+            </div>
+            <div>
+                <div class="eqbox">
+                    <div class="eqtext" style="font-size: 24px;">
+                        Unforeseen crisis.<br>Contract is silent.<br><span class="highlight">Someone must decide.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- ══════════ 10. RESIDUAL RIGHTS  [File 1 · Slide 10] ══════════ -->
+<div class="slide bg-light" data-slide="10">
+    <div class="slide-inner center">
+        <div class="eyebrow">Hart's Core Insight</div>
+        <h2 class="slide-title" style="font-size: 44px;">Ownership =<br><span class="highlight">Decision Rights</span></h2>
+        <div class="divider divider-center"></div>
+        <div style="max-width: 600px; margin: 30px auto;">
+            <ul class="flist">
+                <li><div class="fdot"></div>AI can help <em>execute</em> decisions</li>
+                <li><div class="fdot"></div>AI cannot determine who should have <em>authority</em></li>
+                <li><div class="fdot"></div>Ownership and governance still matter</li>
+            </ul>
+        </div>
+        <p class="small" style="margin-top: 20px;">Residual decision rights cannot be coded into a contract — or an algorithm.</p>
+    </div>
+</div>
+
+
+<!-- ══════════ 11. WHAT BECOMES VALUABLE  [File 1 · Slide 11] ══════════ -->
+<div class="slide bg-white" data-slide="11">
+    <div class="slide-inner">
+        <div class="eyebrow">The Key Question</div>
+        <h2 class="slide-title" style="font-size: 40px;">When knowledge is cheap,<br>what's still <span class="highlight">valuable?</span></h2>
+        <div style="margin-top: 30px;">
+            <div class="cmp" style="max-width: 700px;">
+                <div class="cmp-box cmp-left">
+                    <div class="cmp-label">World Knowledge</div>
+                    <div style="font-size: 20px; font-weight: 700; color: var(--accent); margin-top: 10px;">Commoditized</div>
+                    <p style="font-size: 12px; color: var(--text-secondary); margin-top: 8px;">AI knows marketing.<br>AI knows supply chains.<br>AI knows law.</p>
+                </div>
+                <div class="vs">→</div>
+                <div class="cmp-box cmp-right">
+                    <div class="cmp-label">Firm-Specific Knowledge</div>
+                    <div style="font-size: 20px; font-weight: 700; color: var(--orange); margin-top: 10px;">Strategic</div>
+                    <p style="font-size: 12px; color: var(--text-secondary); margin-top: 8px;">Amazon knows Amazon customers.<br>BMW knows BMW suppliers.<br>You know your context.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- ══════════ 12. FIRM-SPECIFIC EXAMPLES  [File 1 · Slide 12] ══════════ -->
+<div class="slide bg-light" data-slide="12">
+    <div class="slide-inner">
+        <div class="split-wide">
+            <div>
+                <div class="eyebrow">Firm-Specific Knowledge</div>
+                <h2 class="slide-title" style="font-size: 40px;"><span class="highlight">Context</span><br>becomes strategy</h2>
+                <div class="divider"></div>
+                <p class="slide-sub" style="font-size: 16px;">
+                    General knowledge is commoditized. Context is what firms uniquely possess.
+                </p>
+            </div>
+            <div>
+                <ul class="flist">
+                    <li><div class="fdot"></div>Customer relationships & history</li>
+                    <li><div class="fdot"></div>Proprietary data</li>
+                    <li><div class="fdot"></div>Organizational culture</li>
+                    <li><div class="fdot"></div>Internal processes</li>
+                    <li><div class="fdot"></div>Political realities</li>
+                    <li><div class="fdot"></div>Strategic priorities</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- ══════════ 13. OLD FIRM VS NEW FIRM  [File 1 · Slide 13] ══════════ -->
+<div class="slide bg-white" data-slide="13">
+    <div class="slide-inner">
+        <div class="eyebrow">The Transformation</div>
+        <h2 class="slide-title" style="font-size: 38px; margin-bottom: 30px;">The firm <span class="highlight">reimagined</span></h2>
+        <div class="split" style="gap: 30px;">
+            <div class="arg-card" style="border-color: var(--border); opacity: 0.6;">
+                <h4 style="color: var(--text-secondary);">Old Firm · Purpose</h4>
+                <ul class="flist">
+                    <li><div class="fdot" style="background: var(--text-secondary);"></div>Store knowledge</li>
+                    <li><div class="fdot" style="background: var(--text-secondary);"></div>Coordinate workers</li>
+                    <li><div class="fdot" style="background: var(--text-secondary);"></div>Manage information</li>
+                </ul>
+            </div>
+            <div class="arg-card arg-internal">
+                <h4>AI-Era Firm · Purpose</h4>
+                <ul class="flist">
+                    <li><div class="fdot"></div>Own proprietary data</li>
+                    <li><div class="fdot"></div>Control customer relationships</li>
+                    <li><div class="fdot"></div>Govern AI systems</li>
+                    <li><div class="fdot"></div>Make strategic decisions</li>
+                    <li><div class="fdot"></div>Create trust</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- ══════════ 14. ADVANTAGE SHIFTS  [File 1 · Slide 14] ══════════ -->
+<div class="slide bg-light" data-slide="14">
+    <div class="slide-inner center">
+        <div class="eyebrow">Implications for Strategy</div>
+        <h2 class="slide-title" style="font-size: 40px; margin-bottom: 40px;">The advantage <span class="highlight">shifts</span></h2>
+        <div style="max-width: 650px; margin: 0 auto;">
+            <div class="shift-row">
+                <div class="shift-from">Knowledge possession</div>
+                <div class="shift-arrow">→</div>
+                <div class="shift-to">Knowledge integration</div>
+            </div>
+            <div class="shift-row">
+                <div class="shift-from">Headcount</div>
+                <div class="shift-arrow">→</div>
+                <div class="shift-to">AI leverage</div>
+            </div>
+            <div class="shift-row">
+                <div class="shift-from">Process execution</div>
+                <div class="shift-arrow">→</div>
+                <div class="shift-to">Process design</div>
+            </div>
+        </div>
+        <p class="small" style="margin-top: 30px;">Fewer employees may generate greater output.</p>
+    </div>
+</div>
+
+
+<!-- ══════════ 15. RETURN TO OPENING  [File 1 · Slide 15 — purple kept] ══════════ -->
+<div class="slide bg-accent" data-slide="15">
+    <div class="slide-inner center">
+        <div class="eyebrow">Conclusion</div>
+        <h2 class="slide-title" style="font-size: 44px;">If AI knows everything,<br>why do firms <span class="highlight">still exist?</span></h2>
+        <div class="divider divider-center"></div>
+        <p class="medium" style="max-width: 650px; margin: 20px auto 0; opacity: 0.7; font-size: 20px;">
+            Because firms are no longer repositories of knowledge.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 12px; margin-top: 30px; flex-wrap: wrap;">
+            <span class="pill" style="background: rgba(255,255,255,0.12); color: white;">Own assets</span>
+            <span class="pill" style="background: rgba(255,255,255,0.12); color: white;">Control data</span>
+            <span class="pill" style="background: rgba(255,255,255,0.12); color: white;">Govern decisions</span>
+            <span class="pill" style="background: rgba(255,255,255,0.12); color: white;">Build trust</span>
+            <span class="pill" style="background: rgba(255,255,255,0.12); color: white;">Integrate context</span>
+        </div>
+    </div>
+</div>
+
+
+<!-- ══════════ 16. FINAL TAKEAWAY  [File 1 · Slide 16] ══════════ -->
+<div class="slide bg-white" data-slide="16">
+    <div class="slide-inner center">
+        <div class="eyebrow">Final Takeaway</div>
+        <div style="max-width: 700px; margin: 0 auto;">
+            <div class="eqbox" style="margin-bottom: 16px; text-align: left;">
+                <div style="font-size: 15px; font-weight: 700; color: var(--accent); margin-bottom: 4px;">Coase</div>
+                <div style="font-size: 16px;">Firms exist because markets are costly.</div>
+            </div>
+            <div class="eqbox" style="margin-bottom: 16px; text-align: left; border-left-color: var(--orange);">
+                <div style="font-size: 15px; font-weight: 700; color: var(--orange); margin-bottom: 4px;">AI</div>
+                <div style="font-size: 16px;">Makes markets cheaper.</div>
+            </div>
+            <div class="eqbox" style="margin-bottom: 16px; text-align: left;">
+                <div style="font-size: 15px; font-weight: 700; color: var(--accent); margin-bottom: 4px;">Hart</div>
+                <div style="font-size: 16px;">Contracts remain incomplete.</div>
+            </div>
+            <div class="eqbox" style="text-align: left; border-left-color: var(--accent); background: var(--accent-light);">
+                <div style="font-size: 15px; font-weight: 700; color: var(--accent); margin-bottom: 4px;">Therefore</div>
+                <div style="font-size: 16px; font-weight: 600;">Firms survive not because they own knowledge, but because they own <span class="highlight">context, assets, and decision rights.</span></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- ══════════ 17. BUT WAIT  [File 2 · Slide 16] ══════════ -->
+<div class="slide bg-white" data-slide="17">
+    <div class="slide-inner center">
+        <div style="font-size: 80px; opacity: 0.1; margin-bottom: 10px;">⚡</div>
+        <h2 class="slide-title" style="font-size: 48px;">But <span class="highlight">wait…</span></h2>
+        <div class="divider divider-center"></div>
+        <p class="slide-sub" style="margin: 0 auto; font-size: 19px;">
+            AI changes the marginal cost on <em>both sides</em> of the equation — inside and outside the firm.
+        </p>
+        <p style="font-size: 16px; font-weight: 600; color: var(--accent); margin-top: 24px;">
+            Will AI lower internal or external costs faster?
+        </p>
+    </div>
+</div>
+
+
+<!-- ══════════ 18. INTERNAL VS EXTERNAL  [File 1 · Slide 8] ══════════ -->
+<div class="slide bg-white" data-slide="18">
+    <div class="slide-inner">
+        <div class="eyebrow">The Real Debate</div>
+        <h2 class="slide-title" style="font-size: 36px; margin-bottom: 30px;">Which costs fall <span class="highlight">faster?</span></h2>
+        <div class="split" style="gap: 30px;">
+            <div class="arg-card arg-internal">
+                <h4>AI lowers internal costs faster</h4>
+                <ul class="flist">
+                    <li><div class="fdot"></div>Automates HR, accounting, logistics — managing large teams gets cheaper</li>
+                    <li><div class="fdot"></div>AI schedulers & analytics make large-scale production more efficient in-house</li>
+                </ul>
+            </div>
+            <div class="arg-card arg-external">
+                <h4>AI lowers external costs faster</h4>
+                <ul class="flist">
+                    <li><div class="fdot"></div>AI platforms reduce friction of outsourcing — hiring, supply chains, collaboration</li>
+                    <li><div class="fdot"></div>Easier to have specialized networked firms than one expensive generalist</li>
+                </ul>
+            </div>
+        </div>
+        <p class="small center" style="margin-top: 24px;">Both arguments are strong. The answer depends on context.</p>
+    </div>
+</div>
+
+
+<!-- ══════════ 19. DISCUSSION QUESTION  [File 1 · Slide 17] ══════════ -->
+<div class="slide bg-light" data-slide="19">
+    <div class="slide-inner center">
+        <div class="eyebrow">Discussion</div>
+        <h2 class="slide-title" style="font-size: 36px; max-width: 800px; margin: 0 auto;">
+            If AI reduces transaction costs close to zero, will the dominant organization of the future be a
+            <span class="highlight">100,000-person corporation</span>
+            — or a network of
+            <span style="color: var(--orange);">AI-enabled microfirms</span>
+            coordinated through digital platforms?
+        </h2>
+    </div>
+</div>
+
+
+<!-- ══════════ 20. BIBLIOGRAPHY  [File 2 · Slide 19] ══════════ -->
+<div class="slide bg-white" data-slide="20">
+    <div class="slide-inner">
+        <div class="eyebrow">Bibliography</div>
+        <h2 class="slide-title" style="font-size: 28px; margin-bottom: 24px;">References</h2>
+        <div class="bib bib-cols">
+            <p>Coase, R. H. (1937). The nature of the firm. <em>Economica</em>, 4(16), 386–405.</p>
+            <p>Coverdale, C. (2025). Coase vs AI: How AI agents affect the nature of the firm. <em>Tangentially Economics</em>.</p>
+            <p>Grossman, S. J., & Hart, O. D. (1986). The costs and benefits of ownership. <em>Journal of Political Economy</em>, 94(4), 691–719.</p>
+            <p>Hart, O. (1995). <em>Firms, contracts, and financial structure</em>. Clarendon Press.</p>
+            <p>Klein, T., & Wieczorek, S. (2026). The headless firm: How AI reshapes enterprise boundaries. <em>arXiv</em>.</p>
+            <p>Li, X. (2009). The nature of the firm: A relationship-based theory. CBS Working Paper.</p>
+            <p>Royal Swedish Academy of Sciences. (2016). Scientific background: Hart and Holmström — Contract theory.</p>
+            <p>Tchipev, P. D. (2016). The firm as transaction cost economics concept. <em>MPRA</em>.</p>
+            <p>Warin, T. (2025). From Coase to AI agents. <em>California Management Review</em>.</p>
+            <p>Williamson, O. E. (1979). Transaction-cost economics. <em>Journal of Law and Economics</em>, 22(2), 233–261.</p>
+            <p>Williamson, O. E. (2009). Transaction cost economics: The natural progression. Nobel Prize Lecture.</p>
+        </div>
+    </div>
+</div>
+
+
+<!-- ══════════ JAVASCRIPT ══════════ -->
+<script>
+    const slides = document.querySelectorAll('.slide');
+    const counter = document.getElementById('counter');
+    const progress = document.getElementById('progress');
+    const navHint = document.getElementById('navHint');
+    const cursor = document.getElementById('cursor');
+    const clickArea = document.getElementById('clickArea');
+    const total = slides.length;
+    let current = 0;
+    const DASHBOARD_INDEX = 2; // slide 3 (0-indexed)
+
+    function goTo(i) {
+        if (i < 0 || i >= total) return;
+        slides[current].classList.remove('active');
+        current = i;
+        slides[current].classList.add('active');
+        counter.textContent = (current + 1) + ' / ' + total;
+        progress.style.width = ((current + 1) / total * 100) + '%';
+
+        // Adapt UI to background
+        const s = slides[current];
+        const dark = s.classList.contains('bg-accent') || s.classList.contains('bg-dark');
+        counter.style.color = dark ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.12)';
+        navHint.style.color = dark ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.1)';
+
+        // On dashboard slide, hide click area so iframe is interactive
+        clickArea.style.display = current === DASHBOARD_INDEX ? 'none' : 'block';
+    }
+
+    // Keyboard
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'Enter') { e.preventDefault(); goTo(current + 1); }
+        if (e.key === 'ArrowLeft' || e.key === 'Backspace') { e.preventDefault(); goTo(current - 1); }
+        if (e.key === 'Home') { e.preventDefault(); goTo(0); }
+        if (e.key === 'End') { e.preventDefault(); goTo(total - 1); }
+    });
+
+    // Click — right 70% = next, left 30% = prev
+    clickArea.addEventListener('click', function(e) {
+        e.clientX > window.innerWidth * 0.3 ? goTo(current + 1) : goTo(current - 1);
+    });
+
+    // Custom cursor
+    document.addEventListener('mousemove', function(e) {
+        cursor.style.left = e.clientX + 'px';
+        cursor.style.top = e.clientY + 'px';
+    });
+
+    // Hide nav hint
+    setTimeout(() => { navHint.style.opacity = '0'; }, 4000);
+
+    // Touch swipe
+    let tx = 0;
+    document.addEventListener('touchstart', e => { tx = e.changedTouches[0].screenX; });
+    document.addEventListener('touchend', e => {
+        const d = tx - e.changedTouches[0].screenX;
+        if (d > 50) goTo(current + 1);
+        if (d < -50) goTo(current - 1);
+    });
+
+    // Init
+    goTo(0);
+</script>
+
+</body>
+</html>
