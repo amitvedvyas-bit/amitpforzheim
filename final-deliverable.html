@@ -347,7 +347,7 @@
             cursor: none;
         }
 
-        /* ── SLIDE SYSTEM ── */
+        /* SLIDE SYSTEM */
         .slide {
             position: absolute;
             top: 0; left: 0;
@@ -364,13 +364,13 @@
         .slide.active { opacity: 1; pointer-events: all; }
         .slide-inner { max-width: 1100px; width: 100%; }
 
-        /* ── BACKGROUNDS ── */
+        /* BACKGROUNDS */
         .bg-white { background: var(--white); }
         .bg-light { background: var(--bg); }
         .bg-accent { background: linear-gradient(135deg, #3e3dd8 0%, #6366f1 100%); color: white; }
         .bg-dark { background: var(--dark); color: white; }
 
-        /* ── TYPOGRAPHY ── */
+        /* TYPOGRAPHY */
         .eyebrow {
             font-size: 11px;
             font-weight: 700;
@@ -400,7 +400,7 @@
         .bg-dark .highlight { color: var(--orange); }
         .center { text-align: center; }
 
-        /* ── LAYOUT ── */
+        /* LAYOUT */
         .split {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -414,7 +414,7 @@
             align-items: center;
         }
 
-        /* ── DIVIDER ── */
+        /* DIVIDER */
         .divider {
             width: 50px;
             height: 3px;
@@ -426,7 +426,7 @@
         .bg-accent .divider,
         .bg-dark .divider { background: var(--orange); }
 
-        /* ── PILL ── */
+        /* PILL */
         .pill {
             display: inline-block;
             padding: 6px 14px;
@@ -440,7 +440,7 @@
         .pill-orange { background: var(--orange-light); color: var(--orange); }
         .pill-danger { background: #fee; color: var(--danger); }
 
-        /* ── FEATURE LIST ── */
+        /* FEATURE LIST */
         .flist { list-style: none; }
         .flist li {
             font-size: 17px;
@@ -464,7 +464,7 @@
         .bg-accent .fdot,
         .bg-dark .fdot { background: var(--orange); }
 
-        /* ── EQUATION BOX ── */
+        /* EQUATION BOX */
         .eqbox {
             background: var(--bg);
             border-radius: 14px;
@@ -490,7 +490,7 @@
             margin-top: 10px;
         }
 
-        /* ── COMPARE ROW ── */
+        /* COMPARE ROW */
         .cmp {
             display: grid;
             grid-template-columns: 1fr auto 1fr;
@@ -528,7 +528,7 @@
             opacity: 0.3;
         }
 
-        /* ── TABLE ── */
+        /* TABLE */
         .clean-table {
             width: 100%;
             border-collapse: collapse;
@@ -553,7 +553,7 @@
             font-weight: 600;
         }
 
-        /* ── SHIFT CARDS ── */
+        /* SHIFT CARDS */
         .shift-row {
             display: grid;
             grid-template-columns: 1fr auto 1fr;
@@ -581,7 +581,7 @@
             color: var(--accent);
         }
 
-        /* ── ARGUMENT CARDS ── */
+        /* ARGUMENT CARDS */
         .arg-card {
             padding: 24px;
             border-radius: 14px;
@@ -599,7 +599,7 @@
         .arg-external { border-color: var(--orange); }
         .arg-external h4 { color: var(--orange); }
 
-        /* ── IFRAME SLIDE ── */
+        /* IFRAME SLIDE */
         .iframe-wrapper {
             width: 100%;
             height: 70vh;
@@ -614,11 +614,11 @@
             border: none;
         }
 
-        /* ── SVG CONTAINERS ── */
+        /* SVG CONTAINERS */
         .svg-wrap { display: flex; justify-content: center; margin: 20px 0; }
         .svg-wrap svg { max-width: 100%; height: auto; }
 
-        /* ── ANIMATION: SHRINKING FIRM ── */
+        /* ANIMATION: SHRINKING FIRM */
         @keyframes moveOut1 { 0% { transform: translate(0,0); opacity: 1; } 100% { transform: translate(-120px, -60px); opacity: 0.7; } }
         @keyframes moveOut2 { 0% { transform: translate(0,0); opacity: 1; } 100% { transform: translate(130px, -50px); opacity: 0.7; } }
         @keyframes moveOut3 { 0% { transform: translate(0,0); opacity: 1; } 100% { transform: translate(-110px, 70px); opacity: 0.7; } }
@@ -633,12 +633,12 @@
         .slide.active .anim-shrink { animation: shrinkCircle 1.5s 0.5s ease forwards; }
         .slide.active .anim-dash { animation: fadeInDash 0.8s 1.8s ease forwards; }
 
-        /* ── BIBLIOGRAPHY ── */
+        /* BIBLIOGRAPHY */
         .bib { font-size: 11.5px; line-height: 1.8; color: var(--text-secondary); }
         .bib p { margin-bottom: 6px; }
         .bib-cols { columns: 2; column-gap: 40px; }
 
-        /* ── PROGRESS BAR ── */
+        /* PROGRESS BAR */
         .progress {
             position: fixed;
             top: 0; left: 0;
@@ -648,7 +648,7 @@
             transition: width 0.4s ease;
         }
 
-        /* ── COUNTER ── */
+        /* COUNTER */
         .counter {
             position: fixed;
             bottom: 28px;
@@ -659,7 +659,7 @@
             letter-spacing: 1px;
         }
 
-        /* ── NAV HINT ── */
+        /* NAV HINT */
         .nav-hint {
             position: fixed;
             bottom: 28px;
@@ -670,7 +670,7 @@
             transition: opacity 1s ease;
         }
 
-        /* ── CURSOR ── */
+        /* CURSOR */
         .cursor {
             position: fixed;
             width: 14px; height: 14px;
@@ -682,7 +682,7 @@
             transform: translate(-50%, -50%);
         }
 
-        /* ── CLICK AREA ── */
+        /* CLICK AREA */
         .click-area {
             position: fixed;
             top: 0; left: 0;
@@ -691,7 +691,7 @@
             cursor: none;
         }
 
-        /* ── FINAL TEXT ── */
+        /* FINAL TEXT */
         .final {
             font-family: 'DM Serif Display', serif;
             font-size: 56px;
@@ -699,7 +699,7 @@
             letter-spacing: -1.5px;
         }
 
-        /* ── RESPONSIVE ── */
+        /* RESPONSIVE */
         @media (max-width: 1024px) {
             .slide { padding: 40px; }
             .slide-title { font-size: 36px; }
@@ -723,7 +723,7 @@
 <div class="counter" id="counter">1 / 20</div>
 
 
-<!-- ══════════ 1. TITLE  [File 1 · Slide 1] ══════════ -->
+<!-- 1. TITLE -->
 <div class="slide bg-white active" data-slide="1">
     <div class="slide-inner center">
         <div class="eyebrow">A Presentation on Economics & AI</div>
@@ -739,7 +739,7 @@
 </div>
 
 
-<!-- ══════════ 2. THOUGHT EXPERIMENT  [File 1 · Slide 2 — pills updated] ══════════ -->
+<!-- 2. THOUGHT EXPERIMENT -->
 <div class="slide bg-light" data-slide="2">
     <div class="slide-inner center">
         <div class="eyebrow">Opening · Thought Experiment</div>
@@ -752,13 +752,13 @@
             <span class="pill pill-accent">Can communicate instantly with anyone</span>
         </div>
         <p class="medium center" style="margin-top: 30px; opacity: 0.5;">
-            If all of this is true — will firms still exist?
+            If all of this is true, will firms still exist?
         </p>
     </div>
 </div>
 
 
-<!-- ══════════ 3. SNEAKERS DASHBOARD  [File 1 · Slide 3] ══════════ -->
+<!-- 3. SNEAKERS DASHBOARD -->
 <div class="slide bg-white" data-slide="3" style="padding: 30px 40px;">
     <div class="slide-inner" style="max-width: 1300px;">
         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
@@ -774,7 +774,7 @@
                   <div class="brand">
                     <div class="logo">SC</div>
                     <div>
-                      <div class="title">Sneakers Co — Live Dashboard</div>
+                      <div class="title">Sneakers Co - Live Dashboard</div>
                       <div class="subtitle">2035 Workspace • Local storage (no server needed)</div>
                     </div>
                   </div>
@@ -916,7 +916,7 @@
 </div>
 
 
-<!-- ══════════ 4. TRANSACTION COSTS  [File 1 · Slide 4] ══════════ -->
+<!-- 4. TRANSACTION COSTS -->
 <div class="slide bg-white" data-slide="4">
     <div class="slide-inner">
         <div class="split-wide">
@@ -943,7 +943,7 @@
 </div>
 
 
-<!-- ══════════ 5. COASE'S EQUATION  [File 1 · Slide 5] ══════════ -->
+<!-- 5. COASE'S EQUATION -->
 <div class="slide bg-light" data-slide="5">
     <div class="slide-inner center">
         <div class="eyebrow">Coase's Core Insight</div>
@@ -971,7 +971,7 @@
 </div>
 
 
-<!-- ══════════ 6. AI ATTACKS TRANSACTION COSTS  [File 1 · Slide 6] ══════════ -->
+<!-- 6. AI ATTACKS TRANSACTION COSTS -->
 <div class="slide bg-white" data-slide="6">
     <div class="slide-inner">
         <div class="eyebrow">The AI Impact</div>
@@ -995,7 +995,7 @@
 </div>
 
 
-<!-- ══════════ 7. CONSEQUENCE + ANIMATION  [File 1 · Slide 7 + File 2 · Slide 7 animation] ══════════ -->
+<!-- 7. CONSEQUENCE + ANIMATION -->
 <div class="slide bg-light" data-slide="7">
     <div class="slide-inner center">
         <div class="eyebrow">Potential Consequence</div>
@@ -1042,7 +1042,7 @@
 </div>
 
 
-<!-- ══════════ 8. NOT SO FAST  [File 2 · Slide 8] ══════════ -->
+<!-- 8. NOT SO FAST -->
 <div class="slide bg-accent" data-slide="8">
     <div class="slide-inner center">
         <div class="eyebrow">Does AI Eliminate Firms?</div>
@@ -1059,7 +1059,7 @@
 </div>
 
 
-<!-- ══════════ 9. HART — INCOMPLETE CONTRACTS  [File 1 · Slide 9 — changed to light bg] ══════════ -->
+<!-- 9. HART: INCOMPLETE CONTRACTS -->
 <div class="slide bg-light" data-slide="9">
     <div class="slide-inner">
         <div class="split-wide">
@@ -1083,7 +1083,7 @@
 </div>
 
 
-<!-- ══════════ 10. RESIDUAL RIGHTS  [File 1 · Slide 10] ══════════ -->
+<!-- 10. RESIDUAL RIGHTS -->
 <div class="slide bg-light" data-slide="10">
     <div class="slide-inner center">
         <div class="eyebrow">Hart's Core Insight</div>
@@ -1096,12 +1096,12 @@
                 <li><div class="fdot"></div>Ownership and governance still matter</li>
             </ul>
         </div>
-        <p class="small" style="margin-top: 20px;">Residual decision rights cannot be coded into a contract — or an algorithm.</p>
+        <p class="small" style="margin-top: 20px;">Residual decision rights cannot be coded into a contract, or an algorithm.</p>
     </div>
 </div>
 
 
-<!-- ══════════ 11. WHAT BECOMES VALUABLE  [File 1 · Slide 11] ══════════ -->
+<!-- 11. WHAT BECOMES VALUABLE -->
 <div class="slide bg-white" data-slide="11">
     <div class="slide-inner">
         <div class="eyebrow">The Key Question</div>
@@ -1125,7 +1125,7 @@
 </div>
 
 
-<!-- ══════════ 12. FIRM-SPECIFIC EXAMPLES  [File 1 · Slide 12] ══════════ -->
+<!-- 12. FIRM-SPECIFIC EXAMPLES -->
 <div class="slide bg-light" data-slide="12">
     <div class="slide-inner">
         <div class="split-wide">
@@ -1152,7 +1152,7 @@
 </div>
 
 
-<!-- ══════════ 13. OLD FIRM VS NEW FIRM  [File 1 · Slide 13] ══════════ -->
+<!-- 13. OLD FIRM VS NEW FIRM -->
 <div class="slide bg-white" data-slide="13">
     <div class="slide-inner">
         <div class="eyebrow">The Transformation</div>
@@ -1181,7 +1181,7 @@
 </div>
 
 
-<!-- ══════════ 14. ADVANTAGE SHIFTS  [File 1 · Slide 14] ══════════ -->
+<!-- 14. ADVANTAGE SHIFTS -->
 <div class="slide bg-light" data-slide="14">
     <div class="slide-inner center">
         <div class="eyebrow">Implications for Strategy</div>
@@ -1208,7 +1208,7 @@
 </div>
 
 
-<!-- ══════════ 15. RETURN TO OPENING  [File 1 · Slide 15 — purple kept] ══════════ -->
+<!-- 15. RETURN TO OPENING -->
 <div class="slide bg-accent" data-slide="15">
     <div class="slide-inner center">
         <div class="eyebrow">Conclusion</div>
@@ -1228,7 +1228,7 @@
 </div>
 
 
-<!-- ══════════ 16. FINAL TAKEAWAY  [File 1 · Slide 16] ══════════ -->
+<!-- 16. FINAL TAKEAWAY -->
 <div class="slide bg-white" data-slide="16">
     <div class="slide-inner center">
         <div class="eyebrow">Final Takeaway</div>
@@ -1254,14 +1254,14 @@
 </div>
 
 
-<!-- ══════════ 17. BUT WAIT  [File 2 · Slide 16] ══════════ -->
+<!-- 17. BUT WAIT -->
 <div class="slide bg-white" data-slide="17">
     <div class="slide-inner center">
         <div style="font-size: 80px; opacity: 0.1; margin-bottom: 10px;">⚡</div>
         <h2 class="slide-title" style="font-size: 48px;">But <span class="highlight">wait…</span></h2>
         <div class="divider divider-center"></div>
         <p class="slide-sub" style="margin: 0 auto; font-size: 19px;">
-            AI changes the marginal cost on <em>both sides</em> of the equation — inside and outside the firm.
+            AI changes the marginal cost on <em>both sides</em> of the equation, inside and outside the firm.
         </p>
         <p style="font-size: 16px; font-weight: 600; color: var(--accent); margin-top: 24px;">
             Will AI lower internal or external costs faster?
@@ -1270,7 +1270,7 @@
 </div>
 
 
-<!-- ══════════ 18. INTERNAL VS EXTERNAL  [File 1 · Slide 8] ══════════ -->
+<!-- 18. INTERNAL VS EXTERNAL -->
 <div class="slide bg-white" data-slide="18">
     <div class="slide-inner">
         <div class="eyebrow">The Real Debate</div>
@@ -1279,14 +1279,14 @@
             <div class="arg-card arg-internal">
                 <h4>AI lowers internal costs faster</h4>
                 <ul class="flist">
-                    <li><div class="fdot"></div>Automates HR, accounting, logistics — managing large teams gets cheaper</li>
+                    <li><div class="fdot"></div>Automates HR, accounting, logistics: managing large teams gets cheaper</li>
                     <li><div class="fdot"></div>AI schedulers & analytics make large-scale production more efficient in-house</li>
                 </ul>
             </div>
             <div class="arg-card arg-external">
                 <h4>AI lowers external costs faster</h4>
                 <ul class="flist">
-                    <li><div class="fdot"></div>AI platforms reduce friction of outsourcing — hiring, supply chains, collaboration</li>
+                    <li><div class="fdot"></div>AI platforms reduce friction of outsourcing: hiring, supply chains, collaboration</li>
                     <li><div class="fdot"></div>Easier to have specialized networked firms than one expensive generalist</li>
                 </ul>
             </div>
@@ -1296,14 +1296,14 @@
 </div>
 
 
-<!-- ══════════ 19. DISCUSSION QUESTION  [File 1 · Slide 17] ══════════ -->
+<!-- 19. DISCUSSION QUESTION -->
 <div class="slide bg-light" data-slide="19">
     <div class="slide-inner center">
         <div class="eyebrow">Discussion</div>
         <h2 class="slide-title" style="font-size: 36px; max-width: 800px; margin: 0 auto;">
             If AI reduces transaction costs close to zero, will the dominant organization of the future be a
-            <span class="highlight">100,000-person corporation</span>
-            — or a network of
+            <span class="highlight">100,000-person corporation</span>,
+            or a network of
             <span style="color: var(--orange);">AI-enabled microfirms</span>
             coordinated through digital platforms?
         </h2>
@@ -1311,7 +1311,7 @@
 </div>
 
 
-<!-- ══════════ 20. BIBLIOGRAPHY  [File 2 · Slide 19] ══════════ -->
+<!-- 20. BIBLIOGRAPHY -->
 <div class="slide bg-white" data-slide="20">
     <div class="slide-inner">
         <div class="eyebrow">Bibliography</div>
@@ -1323,7 +1323,7 @@
             <p>Hart, O. (1995). <em>Firms, contracts, and financial structure</em>. Clarendon Press.</p>
             <p>Klein, T., & Wieczorek, S. (2026). The headless firm: How AI reshapes enterprise boundaries. <em>arXiv</em>.</p>
             <p>Li, X. (2009). The nature of the firm: A relationship-based theory. CBS Working Paper.</p>
-            <p>Royal Swedish Academy of Sciences. (2016). Scientific background: Hart and Holmström — Contract theory.</p>
+            <p>Royal Swedish Academy of Sciences. (2016). Scientific background: Hart and Holmström: Contract theory.</p>
             <p>Tchipev, P. D. (2016). The firm as transaction cost economics concept. <em>MPRA</em>.</p>
             <p>Warin, T. (2025). From Coase to AI agents. <em>California Management Review</em>.</p>
             <p>Williamson, O. E. (1979). Transaction-cost economics. <em>Journal of Law and Economics</em>, 22(2), 233–261.</p>
@@ -1333,9 +1333,8 @@
 </div>
 
 
-<!-- ══════════ JAVASCRIPT ══════════ -->
+<!-- JAVASCRIPT -->
 <script>
-    // LocalStorage API
     const DB = {
       get(type) {
         const data = localStorage.getItem(`sneakers_${type}`);
@@ -1378,7 +1377,6 @@
 
     DB.init();
 
-    // State
     const state = {
       metrics: { revenue: 2800000, humans: 12, aiagents: 14381, suppliers: 722, decisions: 48210, humanDecisions: 3 },
       currentType: null,
@@ -1392,7 +1390,6 @@
       allData: []
     };
 
-    // Format
     function nFmt(n) { return n.toLocaleString(); }
     function euroFmt(n) {
       if (n >= 1_000_000) return '€' + (n / 1_000_000).toFixed(1) + 'M';
@@ -1400,7 +1397,6 @@
       return '€' + n;
     }
 
-    // Animate counter
     function animateValue(id, start, end, duration = 700) {
       const el = document.getElementById(id);
       if (!el) return;
@@ -1415,7 +1411,6 @@
       requestAnimationFrame(tick);
     }
 
-    // Update metrics
     function updateMetrics() {
       const prev = { ...state.metrics };
       state.metrics.decisions += Math.floor(Math.random() * 120) + 40;
@@ -1431,7 +1426,6 @@
       pushFeed(`${new Date().toLocaleTimeString()} • ${state.metrics.decisions - prev.decisions} decisions processed`);
     }
 
-    // Init display
     animateValue('revenue', 0, state.metrics.revenue, 900);
     animateValue('humans', 0, state.metrics.humans, 900);
     animateValue('aiagents', 0, state.metrics.aiagents, 900);
@@ -1441,7 +1435,6 @@
 
     setInterval(updateMetrics, 3000);
 
-    // Activity feed
     function pushFeed(text) {
       const feedEl = document.getElementById('feed');
       const item = document.createElement('div');
@@ -1451,9 +1444,8 @@
       while (feedEl.children.length > 30) feedEl.removeChild(feedEl.lastChild);
     }
 
-    pushFeed('Dashboard initialized — metrics streaming');
+    pushFeed('Dashboard initialized: metrics streaming');
 
-    // List management
     function filterData(type, search = '', sortBy = 'date', sortOrder = 'desc') {
       let data = DB.get(type);
 
@@ -1529,7 +1521,6 @@
       }).join('');
     }
 
-    // Drawer
     function openDrawer(type) {
       state.currentType = type;
       state.currentPage = 1;
@@ -1590,7 +1581,6 @@
       }
     });
 
-    // CSV Export
     document.getElementById('exportBtn').addEventListener('click', () => {
       const allFiltered = filterData(state.currentType, state.currentSearch, state.currentSort, state.currentOrder);
       if (!allFiltered || allFiltered.length === 0) return;
@@ -1619,7 +1609,6 @@
       URL.revokeObjectURL(url);
     });
 
-    // Events
     document.getElementById('openContracts').addEventListener('click', () => openDrawer('contracts'));
     document.getElementById('openAgents').addEventListener('click', () => openDrawer('agents'));
     document.getElementById('openCampaigns').addEventListener('click', () => openDrawer('campaigns'));
@@ -1651,7 +1640,6 @@
         clickArea.style.display = current === DASHBOARD_INDEX ? 'none' : 'block';
     }
 
-    // Keyboard
     document.addEventListener('keydown', function(e) {
         if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'Enter') { e.preventDefault(); goTo(current + 1); }
         if (e.key === 'ArrowLeft' || e.key === 'Backspace') { e.preventDefault(); goTo(current - 1); }
@@ -1659,21 +1647,18 @@
         if (e.key === 'End') { e.preventDefault(); goTo(total - 1); }
     });
 
-    // Click — right 70% = next, left 30% = prev
+    // Click: right 70% = next, left 30% = prev
     clickArea.addEventListener('click', function(e) {
         e.clientX > window.innerWidth * 0.3 ? goTo(current + 1) : goTo(current - 1);
     });
 
-    // Custom cursor
     document.addEventListener('mousemove', function(e) {
         cursor.style.left = e.clientX + 'px';
         cursor.style.top = e.clientY + 'px';
     });
 
-    // Hide nav hint
     setTimeout(() => { navHint.style.opacity = '0'; }, 4000);
 
-    // Touch swipe
     let tx = 0;
     document.addEventListener('touchstart', e => { tx = e.changedTouches[0].screenX; });
     document.addEventListener('touchend', e => {
@@ -1682,7 +1667,6 @@
         if (d < -50) goTo(current - 1);
     });
 
-    // Init
     goTo(0);
 </script>
 
