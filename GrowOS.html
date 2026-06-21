@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>InFarm GrowOS — Crop Recipe Optimizer</title>
+<style>
+  :root{
+    --deep-green:#064E3B; --forest-green:#14532D; --fresh-green:#16A34A;
+    --bright:#4ADE80; --panel:#0a5e48; --panel-2:#0d6b52;
+    --mint-bg:#ECFDF5; --soft-green:#D1FAE5; --page-bg:#F8FBF8;
+    --surface:#FFFFFF; --dark-text:#0F172A; --muted-text:#64748B; --border:#E2E8F0;
+    --track:#F8FBF8; --warning:#F59E0B; --danger:#DC2626; --on-dark:#CDEFE0;
+  }
+  body.dark{
+    --page-bg:#06140F; --surface:#0c2620; --mint-bg:#0e2e25; --soft-green:#133a2e;
+    --dark-text:#E6F5EE; --muted-text:#9FBFB2; --border:#1c3b31; --track:#0a201a;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--page-bg);color:var(--dark-text);transition:background .3s,color .3s;
+    font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;}
+
+  .topbar{background:var(--surface);border-bottom:1px solid var(--border);
+    display:flex;align-items:center;justify-content:space-between;padding:12px 22px;position:sticky;top:0;z-index:10;gap:12px;}
+  .brand{display:flex;align-items:center;gap:10px;}
+  .brand .mark{width:30px;height:30px;border-radius:8px;background:var(--deep-green);
+    display:flex;align-items:center;justify-content:center;color:var(--bright);font-weight:800;font-size:16px;}
+  .brand .name{font-weight:700;font-size:15px;}
+  .brand .name small{display:block;font-weight:500;font-size:10px;color:var(--muted-text);}
+  .topright{display:flex;align-items:center;gap:14px;}
+  .journey{display:flex;gap:7px;flex-wrap:wrap;font-size:12px;color:var(--muted-text);align-items:center;}
+  .journey .cur{color:var(--fresh-green);font-weight:700;}
+  @media(max-width:820px){.journey{display:none;}}
+  .theme-btn{background:transparent;border:1px solid var(--border);color:var(--dark-text);
+    border-radius:8px;padding:6px 11px;font-size:12px;cursor:pointer;font-weight:600;white-space:nowrap;}
+  .theme-btn:hover{border-color:var(--fresh-green);}
+
+  .head{max-width:1200px;margin:0 auto;padding:22px 22px 6px;}
+  .kicker{font-size:11px;font-weight:700;letter-spacing:.09em;color:var(--fresh-green);text-transform:uppercase;}
+  h1{font-size:26px;margin:6px 0 4px;}
+  .sub{color:var(--muted-text);font-size:14px;margin:0;max-width:760px;}
+
+  .disc{max-width:1200px;margin:14px auto 0;padding:0 22px;}
+  .disc div{background:var(--mint-bg);border:1px solid var(--soft-green);border-radius:10px;
+    padding:9px 13px;font-size:12.5px;color:var(--fresh-green);}
+
+  .grid{max-width:1200px;margin:0 auto;padding:14px 22px 36px;
+    display:grid;grid-template-columns:340px 1fr;gap:20px;align-items:start;}
+  @media(max-width:900px){.grid{grid-template-columns:1fr;}}
+
+  .console{background:var(--deep-green);border-radius:16px;padding:18px;color:var(--on-dark);
+    box-shadow:0 10px 30px rgba(6,78,59,.18);position:sticky;top:78px;}
+  .console h2{font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--bright);margin:0 0 6px;}
+  .presets{display:flex;gap:6px;margin:10px 0 4px;}
+  .preset{flex:1;background:var(--panel);border:1px solid #1d7a5e;color:#eafff5;border-radius:9px;
+    padding:8px 4px;font-size:11px;font-weight:700;cursor:pointer;text-align:center;}
+  .preset:hover{background:var(--panel-2);}
+  .preset.active{background:var(--bright);color:var(--deep-green);border-color:var(--bright);}
+  .console label{display:flex;justify-content:space-between;align-items:center;font-size:11px;font-weight:600;color:#a7e8cf;margin:13px 0 5px;}
+  .console label .info{color:#6fd6a6;cursor:help;font-weight:700;border:1px solid #2a8e6f;border-radius:50%;
+    width:15px;height:15px;display:inline-flex;align-items:center;justify-content:center;font-size:10px;}
+  .console select, .console input[type=number]{width:100%;padding:9px 10px;border-radius:9px;
+    border:1px solid #1d7a5e;background:var(--panel);color:#fff;font-size:14px;}
+  .console input[type=range]{width:100%;accent-color:var(--bright);}
+  .ep b{color:var(--bright);}
+  .btn{border:0;border-radius:10px;padding:12px 16px;font-size:14px;font-weight:700;cursor:pointer;}
+  .btn-primary{background:var(--bright);color:var(--deep-green);width:100%;margin-top:16px;}
+  .btn-primary:hover{background:#39d06d;}
+  .btn-line{background:transparent;border:1px solid #2a8e6f;color:var(--on-dark);width:100%;margin-top:9px;font-weight:600;}
+  .btn-line:hover{background:var(--panel);}
+  .live-note{font-size:10.5px;color:#7fcfa9;margin-top:10px;text-align:center;}
+
+  .main{display:flex;flex-direction:column;gap:18px;}
+  .empty{background:var(--surface);border:1px dashed var(--border);border-radius:16px;
+    padding:60px 20px;text-align:center;color:var(--muted-text);font-size:14px;}
+
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:20px;
+    box-shadow:0 1px 3px rgba(16,24,40,.04);}
+  .card h3{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted-text);margin:0 0 12px;}
+
+  .hero{display:grid;grid-template-columns:auto 1fr;gap:22px;align-items:center;}
+  @media(max-width:600px){.hero{grid-template-columns:1fr;text-align:center;}}
+  .ring-wrap{position:relative;width:150px;height:150px;margin:auto;}
+  .ring-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+  .ring-center .big{font-size:30px;font-weight:800;color:var(--fresh-green);line-height:1;}
+  .ring-center .unit{font-size:11px;color:var(--muted-text);margin-top:3px;}
+  .ring-center .delta{font-size:12px;font-weight:700;margin-top:6px;}
+  .kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+  @media(max-width:560px){.kpis{grid-template-columns:repeat(2,1fr);}}
+  .kpi{background:var(--track);border:1px solid var(--border);border-radius:12px;padding:11px 12px;}
+  .kpi .k{font-size:10px;color:var(--muted-text);text-transform:uppercase;letter-spacing:.05em;}
+  .kpi .v{font-size:19px;font-weight:800;margin-top:3px;}
+  .kpi .d{font-size:11px;font-weight:600;margin-top:1px;}
+  .up{color:var(--fresh-green);} .down{color:var(--danger);} .flat{color:var(--muted-text);}
+
+  .badge{display:inline-block;padding:3px 11px;border-radius:999px;font-size:12px;font-weight:700;}
+  .b-low{background:var(--soft-green);color:var(--fresh-green);}
+  .b-med{background:#FEF3C7;color:#92400E;}
+  .b-high{background:#FEE2E2;color:#991B1B;}
+
+  .twocol{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+  @media(max-width:760px){.twocol{grid-template-columns:1fr;}}
+
+  .rack{display:flex;gap:14px;align-items:center;}
+  .rack .lab{font-size:13px;}
+  .rack .lab b{font-size:15px;}
+
+  .rec{background:var(--mint-bg);border-left:4px solid var(--fresh-green);border-radius:0 10px 10px 0;
+    padding:12px 14px;font-size:14px;}
+  .rec b{color:var(--fresh-green);}
+
+  .chips{display:flex;gap:8px;flex-wrap:wrap;}
+  .chip{background:var(--deep-green);color:#eafff5;border-radius:999px;padding:6px 12px;font-size:12px;font-weight:600;
+    display:flex;gap:6px;align-items:center;cursor:help;}
+  .chip small{color:var(--bright);font-weight:700;}
+
+  .bars .bar-row{display:flex;align-items:center;gap:10px;margin:8px 0;font-size:12px;}
+  .bars .lab{width:84px;color:var(--muted-text);}
+  .bar-track{flex:1;background:var(--track);border:1px solid var(--border);border-radius:7px;height:20px;overflow:hidden;}
+  .bar-fill{height:100%;border-radius:7px 0 0 7px;transition:width .5s ease;}
+  .bar-base{background:#94a3b8;} .bar-opt{background:var(--fresh-green);}
+  .bars .num{width:70px;text-align:right;font-weight:700;}
+
+  .timeline{margin-top:6px;}
+  .tl-row{display:flex;align-items:center;gap:10px;margin:7px 0;font-size:12px;}
+  .tl-row .lab{width:84px;color:var(--muted-text);}
+  .tl-bar{height:16px;border-radius:6px;display:flex;align-items:center;justify-content:flex-end;
+    padding-right:7px;color:#fff;font-size:10px;font-weight:700;transition:width .5s ease;}
+  .tl-base{background:#94a3b8;} .tl-opt{background:var(--fresh-green);}
+
+  table{width:100%;border-collapse:collapse;font-size:13px;}
+  th,td{border-bottom:1px solid var(--border);padding:8px 6px;text-align:left;}
+  th{color:var(--muted-text);font-size:11px;text-transform:uppercase;letter-spacing:.04em;}
+  td.opt{font-weight:700;color:var(--fresh-green);}
+
+  .detail .row{display:flex;justify-content:space-between;font-size:13px;padding:7px 0;border-bottom:1px solid var(--border);}
+  .detail .row span:first-child{color:var(--muted-text);cursor:help;}
+  .opnote{font-size:12px;color:var(--muted-text);margin-top:12px;font-style:italic;}
+
+  .legend{display:flex;gap:16px;font-size:11px;color:var(--muted-text);margin-top:8px;justify-content:center;}
+  .legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:middle;}
+
+  .actions{display:flex;gap:10px;flex-wrap:wrap;}
+  .actions .btn{flex:1;min-width:150px;}
+  .act-dark{background:var(--deep-green);color:#fff;}
+  .act-dark:hover{background:var(--forest-green);}
+  .act-ghost{background:var(--surface);border:1px solid var(--border);color:var(--dark-text);}
+  .act-ghost:hover{border-color:var(--fresh-green);}
+
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--deep-green);
+    color:#fff;padding:12px 20px;border-radius:10px;font-size:14px;box-shadow:0 8px 24px rgba(0,0,0,.25);
+    opacity:0;pointer-events:none;transition:opacity .25s;z-index:50;}
+  .toast.show{opacity:1;}
+  footer{background:var(--deep-green);color:#9fe7cf;font-size:12px;text-align:center;padding:18px;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand">
+    <div class="mark">G</div>
+    <div class="name">InFarm GrowOS<small>Controlled-environment farm software</small></div>
+  </div>
+  <div class="topright">
+    <div class="journey"><span>Discover</span>→<span>Diagnose</span>→<span class="cur">Optimize</span>→<span>Monitor</span>→<span>ROI</span>→<span>Demo</span></div>
+    <button class="theme-btn" id="themeBtn" onclick="toggleTheme()">◐ Dark mode</button>
+  </div>
+</div>
+
+<div class="head">
+  <div class="kicker">AI Crop Optimization</div>
+  <h1>Crop Recipe Optimizer</h1>
+  <p class="sub">Turn your crop, farm context, and operating goal into an illustrative grow-recipe scenario — then compare it against the baseline and apply it to your performance dashboard.</p>
+</div>
+
+<div class="disc"><div>⚠️ Demo recipe values are illustrative and must be validated by agronomy experts before real-world use.</div></div>
+
+<div class="grid">
+  <!-- INPUT CONSOLE -->
+  <div class="console">
+    <h2>◢ Recipe Inputs</h2>
+    <div class="presets">
+      <button class="preset" data-p="cons" onclick="applyPreset('cons')">Conservative</button>
+      <button class="preset" data-p="base" onclick="applyPreset('base')">Base</button>
+      <button class="preset" data-p="amb" onclick="applyPreset('amb')">Ambitious</button>
+    </div>
+
+    <label>Crop type</label>
+    <select id="crop" onchange="live()">
+      <option>Lettuce</option><option>Basil</option><option>Mint</option>
+      <option>Microgreens</option><option>Strawberries</option>
+      <option>Premium herbs</option><option>Pharmaceutical botanicals</option>
+    </select>
+
+    <label>Farm type</label>
+    <select id="farm" onchange="live()">
+      <option>Vertical farm</option><option>Container farm</option>
+      <option>In-store farm</option><option>Warehouse farm</option>
+      <option>Controlled greenhouse</option>
+    </select>
+
+    <label>Primary goal <span class="info" title="Maximize yield, Reduce energy, Improve quality consistency, Shorten cycle, or Balanced. Each goal applies a different, illustrative adjustment to the baseline recipe.">i</span></label>
+    <select id="goal" onchange="live()">
+      <option>Maximize yield</option><option selected>Reduce energy</option>
+      <option>Improve quality consistency</option><option>Shorten cycle</option>
+      <option>Balanced optimization</option>
+    </select>
+
+    <label>Growing area (m²)</label>
+    <input id="area" type="number" value="1200" min="1" oninput="live()">
+
+    <label>Current cycle days</label>
+    <input id="cycle" type="number" value="28" min="1" oninput="live()">
+
+    <label>Current yield (kg per cycle)</label>
+    <input id="yieldk" type="number" value="3800" min="0" oninput="live()">
+
+    <label>Lighting type</label>
+    <select id="light" onchange="live()"><option>LED</option><option>Hybrid</option><option>Unknown</option></select>
+
+    <label>Climate stability <span class="info" title="Lower stability raises scenario risk and reduces the recipe compliance target.">i</span></label>
+    <select id="climate" onchange="live()"><option>Low</option><option selected>Medium</option><option>High</option></select>
+
+    <label class="ep">Energy pressure <b><span id="epval">7</span>/10</b></label>
+    <input id="epress" type="range" min="1" max="10" value="7" oninput="document.getElementById('epval').textContent=this.value;live()">
+
+    <button class="btn btn-primary" onclick="generate(true)">Generate Optimized Recipe</button>
+    <button class="btn btn-line" onclick="resetInputs()">Reset Inputs</button>
+    <div class="live-note">Live mode: outputs update as you change inputs.</div>
+  </div>
+
+  <!-- OUTPUT -->
+  <div class="main">
+    <div id="empty" class="empty">Set your inputs and choose a goal, then generate a recipe scenario.<br>The optimizer adjusts the baseline recipe toward your selected goal.</div>
+
+    <div id="result" style="display:none;flex-direction:column;gap:18px;">
+
+      <!-- hero -->
+      <div class="card hero">
+        <div class="ring-wrap">
+          <svg width="150" height="150" viewBox="0 0 150 150">
+            <circle cx="75" cy="75" r="62" fill="none" stroke="var(--border)" stroke-width="13"/>
+            <circle id="ring" cx="75" cy="75" r="62" fill="none" stroke="var(--fresh-green)" stroke-width="13"
+              stroke-linecap="round" stroke-dasharray="0 9999" transform="rotate(-90 75 75)"/>
+          </svg>
+          <div class="ring-center">
+            <div class="big" id="s_yield">–</div>
+            <div class="unit">kg/m² yield</div>
+            <div class="delta" id="d_yield"></div>
+          </div>
+        </div>
+        <div class="kpis">
+          <div class="kpi"><div class="k">Energy impact</div><div class="v" id="s_energy">–</div><div class="d">vs baseline</div></div>
+          <div class="kpi"><div class="k">Cycle days</div><div class="v" id="s_cycle">–</div><div class="d" id="d_cycle"></div></div>
+          <div class="kpi"><div class="k">Total yield</div><div class="v" id="s_total">–</div><div class="d">kg over area</div></div>
+          <div class="kpi"><div class="k">Compliance target</div><div class="v" id="s_comp">–</div><div class="d">recipe</div></div>
+          <div class="kpi"><div class="k">Risk level</div><div class="v"><span id="s_risk" class="badge b-low">–</span></div><div class="d">scenario</div></div>
+          <div class="kpi"><div class="k">Goal</div><div class="v" style="font-size:13px;" id="s_goal">–</div><div class="d" id="s_crop"></div></div>
+        </div>
+      </div>
+
+      <div class="rec"><b>AI recommendation:</b> <span id="r_rec"></span></div>
+
+      <!-- crop illustration + radar -->
+      <div class="twocol">
+        <div class="card">
+          <h3>Crop & grow cycle</h3>
+          <div class="rack">
+            <div id="cropArt"></div>
+            <div class="lab"><b id="art_crop">Lettuce</b><br><span style="color:var(--muted-text)" id="art_farm">Vertical farm</span></div>
+          </div>
+          <div class="timeline" style="margin-top:14px;">
+            <div class="tl-row"><span class="lab">Baseline</span><div class="tl-bar tl-base" id="tl_base">0d</div></div>
+            <div class="tl-row"><span class="lab">Optimized</span><div class="tl-bar tl-opt" id="tl_opt">0d</div></div>
+          </div>
+        </div>
+        <div class="card">
+          <h3>Recipe profile (baseline vs optimized)</h3>
+          <svg id="radar" viewBox="0 0 260 220" width="100%" height="210"></svg>
+          <div class="legend"><span><i style="background:#94a3b8"></i>Baseline</span><span><i style="background:var(--fresh-green)"></i>Optimized</span></div>
+        </div>
+      </div>
+
+      <!-- parameter chips -->
+      <div class="card">
+        <h3>Optimized parameters <span style="text-transform:none;font-weight:400;">(hover for detail)</span></h3>
+        <div class="chips" id="chips"></div>
+      </div>
+
+      <!-- comparison -->
+      <div class="card">
+        <h3>Expected yield — baseline vs optimized</h3>
+        <div class="bars">
+          <div class="bar-row"><span class="lab">Baseline</span><div class="bar-track"><div class="bar-fill bar-base" id="bar_base"></div></div><span class="num" id="num_base"></span></div>
+          <div class="bar-row"><span class="lab">Optimized</span><div class="bar-track"><div class="bar-fill bar-opt" id="bar_opt"></div></div><span class="num" id="num_opt"></span></div>
+        </div>
+        <table id="cmp" style="margin-top:14px;"></table>
+      </div>
+
+      <!-- detail -->
+      <div class="card">
+        <h3>Recipe detail</h3>
+        <div class="detail" id="detail"></div>
+        <div class="opnote" id="opnote"></div>
+      </div>
+
+      <!-- actions -->
+      <div class="actions">
+        <button class="btn act-dark" onclick="applyRecipe()">Apply to Dashboard</button>
+        <button class="btn act-ghost" onclick="exportRecipe('txt')">Download .txt</button>
+        <button class="btn act-ghost" onclick="exportRecipe('json')">Download .json</button>
+        <button class="btn act-ghost" onclick="continueDash()">Continue →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<footer>Educational concept demo. Recipe and ROI outputs are illustrative scenario estimates and must be validated before real-world deployment.</footer>
+
+<script>
+const STATE_KEY = "growos_customer_journey_state";
+
+const baseRecipes = {
+  Lettuce:      { cycleDays:28, photoperiodHours:16, temperatureC:21, humidityPct:65, ph:6.0, ec:1.4, co2ppm:900, irrigation:"Short pulses every 90 minutes during light period", expectedYieldKgM2:3.2 },
+  Basil:        { cycleDays:32, photoperiodHours:15, temperatureC:24, humidityPct:60, ph:6.1, ec:1.6, co2ppm:850, irrigation:"Moderate pulses every 120 minutes", expectedYieldKgM2:2.4 },
+  Mint:         { cycleDays:30, photoperiodHours:15, temperatureC:22, humidityPct:62, ph:6.2, ec:1.5, co2ppm:850, irrigation:"Moderate frequent pulses with humidity watch", expectedYieldKgM2:2.1 },
+  Microgreens:  { cycleDays:12, photoperiodHours:14, temperatureC:20, humidityPct:58, ph:6.0, ec:1.2, co2ppm:750, irrigation:"Light misting cycles, avoid over-saturation", expectedYieldKgM2:1.8 },
+  Strawberries: { cycleDays:45, photoperiodHours:14, temperatureC:20, humidityPct:60, ph:5.8, ec:1.8, co2ppm:900, irrigation:"Controlled drip cycles with root-zone monitoring", expectedYieldKgM2:3.8 },
+  "Premium herbs": { cycleDays:30, photoperiodHours:15, temperatureC:23, humidityPct:60, ph:6.1, ec:1.5, co2ppm:850, irrigation:"Moderate pulse irrigation with consistency monitoring", expectedYieldKgM2:2.5 },
+  "Pharmaceutical botanicals": { cycleDays:42, photoperiodHours:16, temperatureC:23, humidityPct:55, ph:6.0, ec:1.7, co2ppm:950, irrigation:"Strict controlled pulses with compliance logging", expectedYieldKgM2:2.7 }
+};
+const paramHelp = {
+  Photoperiod:"Hours of light per day. More light can raise yield but increases energy use.",
+  Temp:"Air temperature setpoint for the grow zone.",
+  Humidity:"Relative humidity target; tighter bands improve crop consistency.",
+  pH:"Nutrient solution acidity; affects nutrient uptake.",
+  EC:"Electrical conductivity = nutrient strength of the solution.",
+  "CO₂":"CO₂ enrichment in ppm; can boost photosynthesis and yield."
+};
+const cropColors = { Lettuce:"#22c55e", Basil:"#16a34a", Mint:"#10b981", Microgreens:"#84cc16", Strawberries:"#ef4444", "Premium herbs":"#15803d", "Pharmaceutical botanicals":"#0d9488" };
+
+const defaults = { crop:"Lettuce", farm:"Vertical farm", goal:"Reduce energy", area:1200, cycle:28, yieldk:3800, light:"LED", climate:"Medium", epress:7 };
+const presets = { cons:{goal:"Reduce energy",epress:4}, base:{goal:"Balanced optimization",epress:7}, amb:{goal:"Maximize yield",epress:9} };
+const RING_CIRC = 2*Math.PI*62, YIELD_SCALE = 5.0;
+let lastRecipe = null;
+
+function optimize(base, goal){
+  const r = Object.assign({}, base);
+  let energyImpact=0, rec="", lightSchedule="";
+  switch(goal){
+    case "Maximize yield":
+      r.co2ppm += 50; r.photoperiodHours = Math.min(18, r.photoperiodHours+1);
+      r.expectedYieldKgM2 *= 1.10; energyImpact = 6;
+      rec="Prioritize yield gain while monitoring energy peaks."; break;
+    case "Reduce energy":
+      r.photoperiodHours = Math.max(12, r.photoperiodHours-1); r.temperatureC -= 1;
+      r.expectedYieldKgM2 *= 1.02; energyImpact = -12;
+      rec="Shift lighting and climate load toward lower-cost operating windows."; break;
+    case "Improve quality consistency":
+      r.humidityPct -= 2; r.expectedYieldKgM2 *= 1.05; energyImpact = -3;
+      rec="Focus on recipe compliance and humidity stability across zones."; break;
+    case "Shorten cycle":
+      r.cycleDays = Math.max(1, r.cycleDays-2); r.photoperiodHours = Math.min(18, r.photoperiodHours+1);
+      r.co2ppm += 40; r.expectedYieldKgM2 *= 1.04; energyImpact = 5;
+      rec="Shorten cycle carefully while watching crop stress indicators."; break;
+    case "Balanced optimization":
+      r.cycleDays = Math.max(1, r.cycleDays-1); r.expectedYieldKgM2 *= 1.07; energyImpact = -6;
+      rec="Balance crop output and energy efficiency for pilot deployment."; break;
+  }
+  r.expectedYieldKgM2 = Math.round(r.expectedYieldKgM2*100)/100;
+  r.photoperiodHours = Math.round(r.photoperiodHours*10)/10;
+  lightSchedule = r.photoperiodHours + "h light / " + (Math.round((24-r.photoperiodHours)*10)/10) + "h dark";
+  return { r, energyImpact, rec, lightSchedule };
+}
+function riskFor(goal, climate, epress){
+  let s=0;
+  if(goal==="Maximize yield"||goal==="Shorten cycle") s+=2;
+  if(climate==="Low") s+=2; else if(climate==="Medium") s+=1;
+  if(epress>=8) s+=1;
+  if(s>=4) return {label:"High",cls:"b-high"};
+  if(s>=2) return {label:"Medium",cls:"b-med"};
+  return {label:"Low",cls:"b-low"};
+}
+function arrow(base,opt){ const d=Math.round((opt-base)*100)/100;
+  if(opt>base) return '<span class="up">▲ '+d+'</span>';
+  if(opt<base) return '<span class="down">▼ '+Math.abs(d)+'</span>';
+  return '<span class="flat">no change</span>'; }
+function row(label,b,o){ return `<tr><td>${label}</td><td>${b}</td><td class="${b!==o?'opt':''}">${o}</td></tr>`; }
+function val(id){ return document.getElementById(id).value; }
+function numval(id){ return parseFloat(document.getElementById(id).value)||0; }
+
+// animated count-up
+function countUp(el, from, to, dec, fmt){
+  const dur=600, t0=performance.now();
+  function step(t){
+    const p=Math.min(1,(t-t0)/dur), e=1-Math.pow(1-p,3), v=from+(to-from)*e;
+    el.textContent = fmt ? fmt(v) : v.toFixed(dec);
+    if(p<1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+
+// radar chart
+function radarPoint(cx,cy,R,i,n,v){ const a=-Math.PI/2 + i*2*Math.PI/n;
+  return [cx+R*v*Math.cos(a), cy+R*v*Math.sin(a)]; }
+function drawRadar(base,opt){
+  const cx=130, cy=110, R=78, axes=["Photo","Temp","Humid","CO₂","Yield"];
+  const norm=o=>[o.photoperiodHours/18, o.temperatureC/30, o.humidityPct/100, o.co2ppm/1000, o.expectedYieldKgM2/YIELD_SCALE];
+  const nb=norm(base), no=norm(opt); let g="";
+  [0.25,0.5,0.75,1].forEach(r=>{ let p=""; for(let i=0;i<5;i++){const pt=radarPoint(cx,cy,R,i,5,r);p+=pt[0].toFixed(1)+","+pt[1].toFixed(1)+" ";}
+    g+=`<polygon points="${p}" fill="none" stroke="var(--border)" stroke-width="1"/>`; });
+  for(let i=0;i<5;i++){ const pt=radarPoint(cx,cy,R,i,5,1.16);
+    g+=`<text x="${pt[0].toFixed(1)}" y="${pt[1].toFixed(1)}" font-size="9" fill="var(--muted-text)" text-anchor="middle">${axes[i]}</text>`; }
+  const poly=arr=>{let p="";for(let i=0;i<5;i++){const pt=radarPoint(cx,cy,R,i,5,Math.min(1,arr[i]));p+=pt[0].toFixed(1)+","+pt[1].toFixed(1)+" ";}return p;};
+  g+=`<polygon points="${poly(nb)}" fill="rgba(148,163,184,.25)" stroke="#94a3b8" stroke-width="1.5"/>`;
+  g+=`<polygon points="${poly(no)}" fill="rgba(22,163,74,.25)" stroke="#16A34A" stroke-width="2"/>`;
+  document.getElementById('radar').innerHTML=g;
+}
+
+// crop illustration (grow rack with crop-coloured plants)
+function drawCropArt(crop){
+  const c=cropColors[crop]||"#16a34a";
+  const berry = crop==="Strawberries";
+  let plants="";
+  for(let s=0;s<3;s++){ const y=18+s*26;
+    plants+=`<rect x="6" y="${y+14}" width="60" height="4" rx="2" fill="#94a3b8"/>`;
+    for(let p=0;p<4;p++){ const x=12+p*14;
+      plants+= berry
+        ? `<circle cx="${x}" cy="${y+10}" r="4" fill="${c}"/><rect x="${x-1}" y="${y+2}" width="2" height="6" fill="#15803d"/>`
+        : `<path d="M${x} ${y+14} q-6 -10 0 -14 q6 4 0 14 Z" fill="${c}"/><path d="M${x} ${y+14} q6 -10 0 -14" fill="none" stroke="#15803d" stroke-width="1"/>`;
+    }
+  }
+  document.getElementById('cropArt').innerHTML =
+    `<svg width="74" height="100" viewBox="0 0 72 100"><rect x="2" y="6" width="68" height="90" rx="8" fill="var(--mint-bg)" stroke="var(--border)"/>${plants}</svg>`;
+}
+
+function render(animate){
+  const crop=val('crop'), farm=val('farm'), goal=val('goal');
+  const area=numval('area'), climate=val('climate'), epress=numval('epress'), light=val('light');
+  const base=baseRecipes[crop];
+  const { r, energyImpact, rec, lightSchedule } = optimize(base, goal);
+  const risk = riskFor(goal, climate, epress);
+  const compliance = climate==="High"?96:climate==="Medium"?93:90;
+
+  // ring
+  const frac=Math.min(1, r.expectedYieldKgM2/YIELD_SCALE);
+  document.getElementById('ring').setAttribute('stroke-dasharray',(frac*RING_CIRC)+' '+RING_CIRC);
+  const sy=document.getElementById('s_yield');
+  if(animate) countUp(sy,0,r.expectedYieldKgM2,2); else sy.textContent=r.expectedYieldKgM2;
+  document.getElementById('d_yield').innerHTML=arrow(base.expectedYieldKgM2,r.expectedYieldKgM2);
+
+  // kpis
+  const se=document.getElementById('s_energy');
+  se.textContent=(energyImpact>=0?'+':'')+energyImpact+'%';
+  se.className='v '+(energyImpact<0?'up':energyImpact>0?'down':'flat');
+  const sc=document.getElementById('s_cycle');
+  if(animate) countUp(sc,0,r.cycleDays,0); else sc.textContent=r.cycleDays;
+  document.getElementById('d_cycle').innerHTML=arrow(base.cycleDays,r.cycleDays);
+  const st=document.getElementById('s_total'), tot=Math.round(r.expectedYieldKgM2*area);
+  if(animate) countUp(st,0,tot,0,v=>Math.round(v).toLocaleString()); else st.textContent=tot.toLocaleString();
+  const scp=document.getElementById('s_comp');
+  if(animate) countUp(scp,0,compliance,0,v=>Math.round(v)+'%'); else scp.textContent=compliance+'%';
+  const rb=document.getElementById('s_risk'); rb.textContent=risk.label; rb.className='badge '+risk.cls;
+  document.getElementById('s_goal').textContent=goal;
+  document.getElementById('s_crop').textContent=crop;
+  document.getElementById('r_rec').textContent=rec;
+
+  // crop art + timeline
+  drawCropArt(crop);
+  document.getElementById('art_crop').textContent=crop;
+  document.getElementById('art_farm').textContent=farm;
+  const maxD=Math.max(base.cycleDays,r.cycleDays);
+  const tb=document.getElementById('tl_base'), to=document.getElementById('tl_opt');
+  tb.style.width=(base.cycleDays/maxD*100)+'%'; tb.textContent=base.cycleDays+'d';
+  to.style.width=(r.cycleDays/maxD*100)+'%'; to.textContent=r.cycleDays+'d';
+
+  // radar
+  drawRadar(base,r);
+
+  // chips
+  const chips=[['Photoperiod',r.photoperiodHours+'h'],['Temp',r.temperatureC+'°C'],['Humidity',r.humidityPct+'%'],['pH',r.ph],['EC',r.ec],['CO₂',r.co2ppm+'ppm']];
+  document.getElementById('chips').innerHTML=chips.map(c=>`<span class="chip" title="${paramHelp[c[0]]||''}">${c[0]} <small>${c[1]}</small></span>`).join('');
+
+  // yield bars
+  const maxY=Math.max(base.expectedYieldKgM2,r.expectedYieldKgM2);
+  document.getElementById('bar_base').style.width=(base.expectedYieldKgM2/maxY*100)+'%';
+  document.getElementById('bar_opt').style.width=(r.expectedYieldKgM2/maxY*100)+'%';
+  document.getElementById('num_base').textContent=base.expectedYieldKgM2;
+  document.getElementById('num_opt').textContent=r.expectedYieldKgM2;
+
+  // table
+  let html='<tr><th>Parameter</th><th>Baseline</th><th>Optimized</th></tr>';
+  html+=row('Cycle days',base.cycleDays,r.cycleDays);
+  html+=row('Photoperiod (h)',base.photoperiodHours,r.photoperiodHours);
+  html+=row('Temperature (°C)',base.temperatureC,r.temperatureC);
+  html+=row('Humidity (%)',base.humidityPct,r.humidityPct);
+  html+=row('pH',base.ph,r.ph);
+  html+=row('EC',base.ec,r.ec);
+  html+=row('CO₂ (ppm)',base.co2ppm,r.co2ppm);
+  html+=row('Expected yield (kg/m²)',base.expectedYieldKgM2,r.expectedYieldKgM2);
+  document.getElementById('cmp').innerHTML=html;
+
+  // detail
+  const det=[['Light schedule',lightSchedule],['Temperature',r.temperatureC+' °C'],['Humidity',r.humidityPct+' %'],['pH',r.ph],['EC',r.ec],['CO₂',r.co2ppm+' ppm'],['Irrigation rhythm',r.irrigation]];
+  document.getElementById('detail').innerHTML=det.map(d=>`<div class="row"><span>${d[0]}</span><span>${d[1]}</span></div>`).join('');
+  document.getElementById('opnote').textContent='Operator note: validate this scenario for '+crop.toLowerCase()+' in a '+farm.toLowerCase()+' with agronomy before applying. Lighting set for '+light+'.';
+
+  lastRecipe={ crop, farmType:farm, goal, cycleDays:r.cycleDays, photoperiodHours:r.photoperiodHours,
+    temperatureC:r.temperatureC, humidityPct:r.humidityPct, ph:r.ph, ec:r.ec, co2ppm:r.co2ppm,
+    irrigation:r.irrigation, expectedYieldKgM2:r.expectedYieldKgM2, totalExpectedYield:tot,
+    energyImpactPct:energyImpact, recommendation:rec, riskLevel:risk.label, appliedToDashboard:false };
+
+  document.getElementById('empty').style.display='none';
+  document.getElementById('result').style.display='flex';
+}
+function generate(animate){ render(animate); }
+function live(){ if(document.getElementById('result').style.display!=='none') render(false); }
+
+function applyPreset(key){
+  const p=presets[key];
+  document.getElementById('goal').value=p.goal;
+  document.getElementById('epress').value=p.epress;
+  document.getElementById('epval').textContent=p.epress;
+  document.querySelectorAll('.preset').forEach(b=>b.classList.toggle('active', b.dataset.p===key));
+  generate(true);
+}
+
+function applyRecipe(){
+  if(!lastRecipe) return;
+  lastRecipe.appliedToDashboard=true;
+  let state={}; try{ state=JSON.parse(localStorage.getItem(STATE_KEY))||{}; }catch(e){ state={}; }
+  state.recipe=lastRecipe;
+  if(!state.dashboard) state.dashboard={};
+  state.dashboard.crop=lastRecipe.crop; state.dashboard.recipeApplied=true;
+  localStorage.setItem(STATE_KEY, JSON.stringify(state));
+  toast("Recipe applied to dashboard ✓");
+}
+function exportRecipe(type){
+  if(!lastRecipe){ toast("Generate a recipe first."); return; }
+  let blob, name;
+  if(type==='json'){ blob=new Blob([JSON.stringify(lastRecipe,null,2)],{type:'application/json'}); name='growos_recipe.json'; }
+  else{
+    const L=lastRecipe;
+    const txt=`InFarm GrowOS — Crop Recipe Scenario\n=====================================\nCrop: ${L.crop}\nFarm type: ${L.farmType}\nGoal: ${L.goal}\n\nCycle days: ${L.cycleDays}\nPhotoperiod: ${L.photoperiodHours} h\nTemperature: ${L.temperatureC} C\nHumidity: ${L.humidityPct} %\npH: ${L.ph}\nEC: ${L.ec}\nCO2: ${L.co2ppm} ppm\nIrrigation: ${L.irrigation}\n\nExpected yield: ${L.expectedYieldKgM2} kg/m2\nTotal expected yield: ${L.totalExpectedYield} kg\nEnergy impact: ${L.energyImpactPct}%\nRisk level: ${L.riskLevel}\n\nAI recommendation: ${L.recommendation}\n\nIllustrative scenario estimate. Validate with agronomy before real-world use.`;
+    blob=new Blob([txt],{type:'text/plain'}); name='growos_recipe.txt';
+  }
+  const url=URL.createObjectURL(blob), a=document.createElement('a');
+  a.href=url; a.download=name; a.click(); URL.revokeObjectURL(url);
+  toast("Recipe downloaded ("+type+")");
+}
+function continueDash(){ toast("In the full GrowOS journey this opens the Performance Dashboard."); }
+function resetInputs(){
+  for(const k in defaults){ const el=document.getElementById(k); if(el) el.value=defaults[k]; }
+  document.getElementById('epval').textContent=defaults.epress;
+  document.querySelectorAll('.preset').forEach(b=>b.classList.remove('active'));
+  document.getElementById('result').style.display='none';
+  document.getElementById('empty').style.display='block';
+  lastRecipe=null;
+}
+function toggleTheme(){
+  document.body.classList.toggle('dark');
+  const d=document.body.classList.contains('dark');
+  document.getElementById('themeBtn').textContent = d ? '◑ Light mode' : '◐ Dark mode';
+}
+let toastTimer=null;
+function toast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show');
+  clearTimeout(toastTimer); toastTimer=setTimeout(()=>t.classList.remove('show'),2600); }
+
+(function(){
+  try{ const s=JSON.parse(localStorage.getItem(STATE_KEY));
+    if(s&&s.diagnosis&&s.diagnosis.crop&&baseRecipes[s.diagnosis.crop]) document.getElementById('crop').value=s.diagnosis.crop;
+  }catch(e){}
+})();
+</script>
+</body>
+</html>
